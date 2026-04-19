@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "CyberBloom",
-    "slug": "CyberBloom",
+    "name": "DeabEase",
+    "slug": "DeabEase",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -9,21 +9,29 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#00BFA5"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kima.deabease"
     },
     "android": {
+      "package": "com.kima.deabease",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#00BFA5",
+        "foregroundImage": "./assets/android-icon-foreground.png"
       }
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "d57ba8c8-cbaf-4f56-ae1d-e766db755f9d"
+      }
     }
   }
 }
