@@ -4,6 +4,7 @@ import * as Notifications from 'expo-notifications';
 import { Clock, Plus, Trash2, Calendar } from 'lucide-react-native';
 import { addReminder, getReminders, deleteReminder } from '../utils/storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useSettings } from '../context/SettingsContext';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -14,6 +15,7 @@ Notifications.setNotificationHandler({
 });
 
 export default function RemindersScreen() {
+  const { getAdjustedFontSize } = useSettings();
   const [reminders, setReminders] = useState([]);
   const [text, setText] = useState('');
   const [date, setDate] = useState(new Date());
@@ -109,7 +111,7 @@ export default function RemindersScreen() {
     <View style={styles.container}>
       <View style={styles.inputCard}>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { fontSize: getAdjustedFontSize(16) }]}
           placeholder="О чем напомнить?"
           value={text}
           onChangeText={setText}
@@ -118,11 +120,11 @@ export default function RemindersScreen() {
         <View style={styles.pickerContainer}>
             <TouchableOpacity style={styles.pickerButton} onPress={() => showMode('date')}>
                 <Calendar size={20} color="#00BFA5" />
-                <Text style={styles.pickerButtonText}>{date.toLocaleDateString()}</Text>
+                <Text style={[styles.pickerButtonText, { fontSize: getAdjustedFontSize(16) }]}>{date.toLocaleDateString()}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.pickerButton} onPress={() => showMode('time')}>
                 <Clock size={20} color="#00BFA5" />
-                <Text style={styles.pickerButtonText}>
+                <Text style={[styles.pickerButtonText, { fontSize: getAdjustedFontSize(16) }]}>
                     {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </Text>
             </TouchableOpacity>
@@ -140,7 +142,7 @@ export default function RemindersScreen() {
 
         <TouchableOpacity style={styles.addButton} onPress={handleAddReminder}>
           <Plus color="white" size={24} />
-          <Text style={styles.addButtonText}>Добавить напоминание</Text>
+          <Text style={[styles.addButtonText, { fontSize: getAdjustedFontSize(18) }]}>Добавить напоминание</Text>
         </TouchableOpacity>
       </View>
 
@@ -151,22 +153,22 @@ export default function RemindersScreen() {
           <View style={styles.reminderItem}>
             <View style={styles.reminderInfo}>
               <View style={styles.timeTag}>
-                <Text style={styles.timeTagText}>
+                <Text style={[styles.timeTagText, { fontSize: getAdjustedFontSize(10) }]}>
                     {new Date(item.time).toLocaleDateString()}
                 </Text>
-                <Text style={styles.timeTagHour}>
+                <Text style={[styles.timeTagHour, { fontSize: getAdjustedFontSize(16) }]}>
                     {new Date(item.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </Text>
               </View>
-              <Text style={styles.reminderText}>{item.text}</Text>
+              <Text style={[styles.reminderText, { fontSize: getAdjustedFontSize(16) }]}>{item.text}</Text>
             </View>
             <TouchableOpacity onPress={() => handleDelete(item.id)}>
               <Trash2 size={20} color="#FF3B30" />
             </TouchableOpacity>
           </View>
         )}
-        ListHeaderComponent={<Text style={styles.listTitle}>Ваши напоминания</Text>}
-        ListEmptyComponent={<Text style={styles.emptyText}>Напоминаний пока нет</Text>}
+        ListHeaderComponent={<Text style={[styles.listTitle, { fontSize: getAdjustedFontSize(18) }]}>Ваши напоминания</Text>}
+        ListEmptyComponent={<Text style={[styles.emptyText, { fontSize: getAdjustedFontSize(16) }]}>Напоминаний пока нет</Text>}
         contentContainerStyle={styles.list}
         refreshing={loading}
         onRefresh={loadReminders}

@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { supabase } from '../utils/supabase';
 import { User, MessageSquare, Phone } from 'lucide-react-native';
+import { useSettings } from '../context/SettingsContext';
 
 export default function PatientListScreen({ navigation }) {
+  const { getAdjustedFontSize } = useSettings();
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -40,8 +42,8 @@ export default function PatientListScreen({ navigation }) {
         <User color="white" size={24} />
       </View>
       <View style={styles.info}>
-        <Text style={styles.name}>{item.full_name}</Text>
-        <Text style={styles.details}>{item.description || 'Нет описания'}</Text>
+        <Text style={[styles.name, { fontSize: getAdjustedFontSize(16) }]}>{item.full_name}</Text>
+        <Text style={[styles.details, { fontSize: getAdjustedFontSize(13) }]}>{item.description || 'Нет описания'}</Text>
       </View>
       <MessageSquare color="#00BFA5" size={20} />
     </TouchableOpacity>
@@ -58,7 +60,7 @@ export default function PatientListScreen({ navigation }) {
           keyExtractor={item => item.id}
           contentContainerStyle={styles.list}
           ListEmptyComponent={
-            <Text style={styles.emptyText}>У вас пока нет назначенных пациентов</Text>
+            <Text style={[styles.emptyText, { fontSize: getAdjustedFontSize(16) }]}>У вас пока нет назначенных пациентов</Text>
           }
           refreshing={loading}
           onRefresh={fetchPatients}

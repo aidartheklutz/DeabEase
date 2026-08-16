@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Bot, Send, Sparkles } from 'lucide-react-native';
 import { getLogs } from '../utils/storage';
+import { useSettings } from '../context/SettingsContext';
 
 export default function AIScreen() {
+  const { getAdjustedFontSize } = useSettings();
   const [messages, setMessages] = useState([
     { id: '1', text: 'Привет! Я ваш ИИ-ассистент. Я могу проанализировать ваши показатели или ответить на вопросы о диабете. Как я могу помочь?', sender: 'ai' }
   ]);
@@ -92,7 +94,7 @@ export default function AIScreen() {
     <View style={[styles.messageWrapper, item.sender === 'user' ? styles.userWrapper : styles.aiWrapper]}>
       {item.sender === 'ai' && <View style={styles.aiIcon}><Bot size={16} color="white" /></View>}
       <View style={[styles.bubble, item.sender === 'user' ? styles.userBubble : styles.aiBubble]}>
-        <Text style={[styles.text, item.sender === 'user' ? styles.userText : styles.aiText]}>{item.text}</Text>
+        <Text style={[styles.text, item.sender === 'user' ? styles.userText : styles.aiText, { fontSize: getAdjustedFontSize(16) }]}>{item.text}</Text>
       </View>
     </View>
   );
@@ -101,7 +103,7 @@ export default function AIScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Sparkles color="#6366f1" size={20} />
-        <Text style={styles.headerSubtitle}>Персональный помощник</Text>
+        <Text style={[styles.headerSubtitle, { fontSize: getAdjustedFontSize(14) }]}>Персональный помощник</Text>
       </View>
       
       <FlatList
@@ -119,7 +121,7 @@ export default function AIScreen() {
       >
         <View style={styles.inputContainer}>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { fontSize: getAdjustedFontSize(16) }]}
             placeholder="Спросите что-нибудь..."
             value={inputText}
             onChangeText={setInputText}

@@ -4,8 +4,10 @@ import { Send, Phone, AlertTriangle, User } from 'lucide-react-native';
 import { supabase } from '../utils/supabase';
 import DoctorSelection from '../components/DoctorSelection';
 import * as Clipboard from 'expo-clipboard';
+import { useSettings } from '../context/SettingsContext';
 
 export default function ChatScreen({ route }) {
+  const { getAdjustedFontSize } = useSettings();
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(true);
@@ -103,10 +105,10 @@ export default function ChatScreen({ route }) {
         item.sender_id === userProfile?.id ? styles.userBubble : styles.partnerBubble,
         item.is_sos && styles.sosBubble
     ]}>
-      <Text style={[styles.messageText, (item.sender_id === userProfile?.id || item.is_sos) ? styles.colorWhite : styles.colorBlack]}>
+      <Text style={[styles.messageText, (item.sender_id === userProfile?.id || item.is_sos) ? styles.colorWhite : styles.colorBlack, { fontSize: getAdjustedFontSize(16) }]}>
         {item.text}
       </Text>
-      <Text style={styles.timestamp}>
+      <Text style={[styles.timestamp, { fontSize: getAdjustedFontSize(10) }]}>
         {new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
       </Text>
     </View>
@@ -123,8 +125,8 @@ export default function ChatScreen({ route }) {
       <View style={styles.chatHeader}>
         <User color="#00BFA5" size={24} />
         <View style={styles.headerInfo}>
-            <Text style={styles.headerName}>{partnerProfile?.full_name || 'Загрузка...'}</Text>
-            <Text style={styles.headerStatus}>{userProfile?.role === 'doctor' ? 'Пациент' : 'Ваш врач'}</Text>
+            <Text style={[styles.headerName, { fontSize: getAdjustedFontSize(16) }]}>{partnerProfile?.full_name || 'Загрузка...'}</Text>
+            <Text style={[styles.headerStatus, { fontSize: getAdjustedFontSize(12) }]}>{userProfile?.role === 'doctor' ? 'Пациент' : 'Ваш врач'}</Text>
         </View>
         <TouchableOpacity style={styles.callIcon} onPress={handleCall}>
             <Phone color="#00BFA5" size={24} />
@@ -143,7 +145,7 @@ export default function ChatScreen({ route }) {
       {userProfile?.role === 'patient' && (
         <TouchableOpacity style={styles.sosButton} onPress={() => handleSend(true)}>
             <AlertTriangle color="white" size={30} />
-            <Text style={styles.sosText}>SOS</Text>
+            <Text style={[styles.sosText, { fontSize: getAdjustedFontSize(12) }]}>SOS</Text>
         </TouchableOpacity>
       )}
 
@@ -153,7 +155,7 @@ export default function ChatScreen({ route }) {
       >
         <View style={styles.inputContainer}>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { fontSize: getAdjustedFontSize(16) }]}
             placeholder="Введите сообщение..."
             value={inputText}
             onChangeText={setInputText}

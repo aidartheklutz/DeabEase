@@ -13,8 +13,10 @@ import {
 } from 'react-native';
 import { supabase } from '../utils/supabase';
 import { User, Mail, Lock, Briefcase, FileText, ChevronRight } from 'lucide-react-native';
+import { useSettings } from '../context/SettingsContext';
 
 export default function AuthScreen() {
+  const { getAdjustedFontSize } = useSettings();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   
@@ -98,8 +100,8 @@ export default function AuthScreen() {
           <View style={styles.logoContainer}>
             <Text style={styles.logoText}>CB</Text>
           </View>
-          <Text style={styles.title}>{isLogin ? 'С возвращением' : 'Создайте аккаунт'}</Text>
-          <Text style={styles.subtitle}>
+          <Text style={[styles.title, { fontSize: getAdjustedFontSize(28) }]}>{isLogin ? 'С возвращением' : 'Создайте аккаунт'}</Text>
+          <Text style={[styles.subtitle, { fontSize: getAdjustedFontSize(16) }]}>
             {isLogin ? 'Войдите в систему CyberBloom' : 'Начните заботу о здоровье прямо сейчас'}
           </Text>
         </View>
@@ -108,7 +110,7 @@ export default function AuthScreen() {
           <View style={styles.inputWrapper}>
             <Mail size={20} color="#00BFA5" style={styles.inputIcon} />
             <TextInput
-              style={styles.input}
+              style={[styles.input, { fontSize: getAdjustedFontSize(16) }]}
               placeholder="Email"
               value={email}
               onChangeText={setEmail}
@@ -120,7 +122,7 @@ export default function AuthScreen() {
           <View style={styles.inputWrapper}>
             <Lock size={20} color="#00BFA5" style={styles.inputIcon} />
             <TextInput
-              style={styles.input}
+              style={[styles.input, { fontSize: getAdjustedFontSize(16) }]}
               placeholder="Пароль"
               value={password}
               onChangeText={setPassword}
@@ -133,7 +135,7 @@ export default function AuthScreen() {
               <View style={styles.inputWrapper}>
                 <User size={20} color="#00BFA5" style={styles.inputIcon} />
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, { fontSize: getAdjustedFontSize(16) }]}
                   placeholder="Полное имя (ФИО)"
                   value={fullName}
                   onChangeText={setFullName}
@@ -143,7 +145,7 @@ export default function AuthScreen() {
               <View style={styles.inputWrapper}>
                 <Briefcase size={20} color="#00BFA5" style={styles.inputIcon} />
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, { fontSize: getAdjustedFontSize(16) }]}
                   placeholder="Номер телефона"
                   value={phoneNumber}
                   onChangeText={setPhoneNumber}
@@ -152,19 +154,19 @@ export default function AuthScreen() {
               </View>
 
               <View style={styles.roleContainer}>
-                <Text style={styles.label}>Вы регистрируетесь как:</Text>
+                <Text style={[styles.label, { fontSize: getAdjustedFontSize(14) }]}>Вы регистрируетесь как:</Text>
                 <View style={styles.roleButtons}>
                   <TouchableOpacity
                     style={[styles.roleButton, role === 'patient' && styles.roleButtonActive]}
                     onPress={() => setRole('patient')}
                   >
-                    <Text style={[styles.roleButtonText, role === 'patient' && styles.roleButtonTextActive]}>Пациент</Text>
+                    <Text style={[styles.roleButtonText, role === 'patient' && styles.roleButtonTextActive, { fontSize: getAdjustedFontSize(14) }]}>Пациент</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.roleButton, role === 'doctor' && styles.roleButtonActive]}
                     onPress={() => setRole('doctor')}
                   >
-                    <Text style={[styles.roleButtonText, role === 'doctor' && styles.roleButtonTextActive]}>Врач</Text>
+                    <Text style={[styles.roleButtonText, role === 'doctor' && styles.roleButtonTextActive, { fontSize: getAdjustedFontSize(14) }]}>Врач</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -173,7 +175,7 @@ export default function AuthScreen() {
                 <View style={styles.inputWrapper}>
                   <Briefcase size={20} color="#00BFA5" style={styles.inputIcon} />
                   <TextInput
-                    style={styles.input}
+                    style={[styles.input, { fontSize: getAdjustedFontSize(16) }]}
                     placeholder="Место работы / Специализация"
                     value={affiliation}
                     onChangeText={setAffiliation}
@@ -184,7 +186,7 @@ export default function AuthScreen() {
               <View style={[styles.inputWrapper, styles.textAreaWrapper]}>
                 <FileText size={20} color="#00BFA5" style={[styles.inputIcon, { marginTop: 12 }]} />
                 <TextInput
-                  style={[styles.input, styles.textArea]}
+                  style={[styles.input, styles.textArea, { fontSize: getAdjustedFontSize(16) }]}
                   placeholder={role === 'doctor' ? 'О себе / Квалификация' : 'Особенности заболевания / Примечания'}
                   value={description}
                   onChangeText={setDescription}
@@ -204,7 +206,7 @@ export default function AuthScreen() {
               <ActivityIndicator color="white" />
             ) : (
               <>
-                <Text style={styles.authButtonText}>{isLogin ? 'Войти' : 'Зарегистрироваться'}</Text>
+                <Text style={[styles.authButtonText, { fontSize: getAdjustedFontSize(18) }]}>{isLogin ? 'Войти' : 'Зарегистрироваться'}</Text>
                 <ChevronRight size={20} color="white" />
               </>
             )}
@@ -214,7 +216,7 @@ export default function AuthScreen() {
             style={styles.switchButton}
             onPress={() => setIsLogin(!isLogin)}
           >
-            <Text style={styles.switchText}>
+            <Text style={[styles.switchText, { fontSize: getAdjustedFontSize(14) }]}>
               {isLogin ? 'Нет аккаунта? Зарегистрируйтесь' : 'Уже есть аккаунт? Войдите'}
             </Text>
           </TouchableOpacity>

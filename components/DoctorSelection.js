@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { supabase } from '../utils/supabase';
 import { User, ChevronRight, Briefcase } from 'lucide-react-native';
+import { useSettings } from '../context/SettingsContext';
 
 export default function DoctorSelection({ onSelect }) {
+  const { getAdjustedFontSize } = useSettings();
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -61,12 +63,12 @@ export default function DoctorSelection({ onSelect }) {
         <User color="white" size={24} />
       </View>
       <View style={styles.info}>
-        <Text style={styles.name}>{item.full_name}</Text>
+        <Text style={[styles.name, { fontSize: getAdjustedFontSize(16) }]}>{item.full_name}</Text>
         <View style={styles.tag}>
           <Briefcase size={12} color="#00BFA5" />
-          <Text style={styles.tagText}>{item.affiliation || 'Врач'}</Text>
+          <Text style={[styles.tagText, { fontSize: getAdjustedFontSize(12) }]}>{item.affiliation || 'Врач'}</Text>
         </View>
-        <Text style={styles.desc} numberOfLines={2}>{item.description}</Text>
+        <Text style={[styles.desc, { fontSize: getAdjustedFontSize(13) }]} numberOfLines={2}>{item.description}</Text>
       </View>
       <ChevronRight color="#ccc" size={20} />
     </TouchableOpacity>
@@ -75,8 +77,8 @@ export default function DoctorSelection({ onSelect }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Выберите лечащего врача</Text>
-        <Text style={styles.subtitle}>После выбора вы сможете общаться с врачом в чате и отправлять данные дневника</Text>
+        <Text style={[styles.title, { fontSize: getAdjustedFontSize(20) }]}>Выберите лечащего врача</Text>
+        <Text style={[styles.subtitle, { fontSize: getAdjustedFontSize(14) }]}>После выбора вы сможете общаться с врачом в чате и отправлять данные дневника</Text>
       </View>
       
       {loading ? (
@@ -88,7 +90,7 @@ export default function DoctorSelection({ onSelect }) {
           keyExtractor={item => item.id}
           contentContainerStyle={styles.list}
           ListEmptyComponent={
-            <Text style={styles.emptyText}>В системе пока нет зарегистрированных врачей</Text>
+            <Text style={[styles.emptyText, { fontSize: getAdjustedFontSize(14) }]}>В системе пока нет зарегистрированных врачей</Text>
           }
         />
       )}

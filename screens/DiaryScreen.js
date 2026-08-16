@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { saveLog, getLogs, deleteLog } from '../utils/storage';
-import { Plus, Share2, Trash2 } from 'lucide-react-native';
+import { Plus, Share2, Trash2, AlertTriangle } from 'lucide-react-native';
 import * as Sharing from 'expo-sharing';
 import { supabase } from '../utils/supabase';
+import { useIsFocused } from '@react-navigation/native';
+import { useSettings } from '../context/SettingsContext';
 
 export default function DiaryScreen() {
   const [logs, setLogs] = useState([]);
@@ -12,10 +14,15 @@ export default function DiaryScreen() {
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState(null);
 
+  const { minLimit, maxLimit, getAdjustedFontSize } = useSettings();
+  const isFocused = useIsFocused();
+
   useEffect(() => {
-    loadData();
-    fetchProfile();
-  }, []);
+    if (isFocused) {
+      loadData();
+      fetchProfile();
+    }
+  }, [isFocused]);
 
   const fetchProfile = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -38,8 +45,10 @@ export default function DiaryScreen() {
 
     const value = parseFloat(sugar);
     let status = 'Норма';
-    if (value < 3.9) status = 'Низкий';
-    if (value > 7.8) status = 'Высокий';
+    if (!isNaN(value)) {
+      if (value < minLimit) status = 'Низкий';
+      if (value > maxLimit) status = 'Высокий';
+    }
 
     const newLogData = {
       value: sugar || '0',
@@ -114,48 +123,87 @@ export default function DiaryScreen() {
     );
   };
 
+  const renderWarningBanner = () => {
+    if (logs.length === 0) return null;
+    const latestLog = logs[0];
+    const sugarVal = parseFloat(latestLog.sugar_level);
+    if (isNaN(sugarVal)) return null;
+
+    if (sugarVal < minLimit) {
+      return (
+        <View style={styles.warningBanner}>
+          <AlertTriangle color="#FF3B30" size={24} style={styles.warningIcon} />
+          <View style={styles.warningTextContainer}>
+            <Text style={[styles.warningTitle, { fontSize: getAdjustedFontSize(15) }]}>Внимание! Сахар слишком низкий</Text>
+            <Text style={[styles.warningSubtitle, { fontSize: getAdjustedFontSize(13) }]}>
+              Последний показатель сахара: {sugarVal} ммоль/л (ниже нормы {minLimit} ммоль/л)
+            </Text>
+          </View>
+        </View>
+      );
+    }
+
+    if (sugarVal > maxLimit) {
+      return (
+        <View style={styles.warningBanner}>
+          <AlertTriangle color="#FF3B30" size={24} style={styles.warningIcon} />
+          <View style={styles.warningTextContainer}>
+            <Text style={[styles.warningTitle, { fontSize: getAdjustedFontSize(15) }]}>Внимание! Сахар слишком высокий</Text>
+            <Text style={[styles.warningSubtitle, { fontSize: getAdjustedFontSize(13) }]}>
+              Последний показатель сахара: {sugarVal} ммоль/л (выше нормы {maxLimit} ммоль/л)
+            </Text>
+          </View>
+        </View>
+      );
+    }
+
+    return null;
+  };
+
   const renderItem = ({ item }) => (
     <View style={styles.logItem}>
       <View style={styles.logHeader}>
-        <Text style={styles.timestamp}>{new Date(item.timestamp).toLocaleString('ru-RU')}</Text>
+        <Text style={[styles.timestamp, { fontSize: getAdjustedFontSize(14) }]}>{new Date(item.timestamp).toLocaleString('ru-RU')}</Text>
         <View style={[styles.statusBadge, 
           item.status === 'Низкий' ? styles.statusLow : 
           item.status === 'Высокий' ? styles.statusHigh : styles.statusNormal]}>
-          <Text style={styles.statusText}>{item.status}</Text>
+          <Text style={[styles.statusText, { fontSize: getAdjustedFontSize(12) }]}>{item.status}</Text>
         </View>
         <TouchableOpacity onPress={() => handleDeleteLog(item.id)}>
           <Trash2 size={18} color="#FF3B30" />
         </TouchableOpacity>
       </View>
-      <Text style={styles.logLabel}>Сахар: <Text style={styles.logValue}>{item.sugar_level} ммоль/л</Text></Text>
-      <Text style={styles.logLabel}>Питание: <Text style={styles.logValue}>{item.notes}</Text></Text>
+      <Text style={[styles.logLabel, { fontSize: getAdjustedFontSize(16) }]}>Сахар: <Text style={[styles.logValue, { fontSize: getAdjustedFontSize(16) }]}>{item.sugar_level} ммоль/л</Text></Text>
+      <Text style={[styles.logLabel, { fontSize: getAdjustedFontSize(16) }]}>Питание: <Text style={[styles.logValue, { fontSize: getAdjustedFontSize(16) }]}>{item.notes}</Text></Text>
     </View>
   );
 
   return (
     <View style={styles.container}>
+      {renderWarningBanner()}
+      
       <View style={styles.inputSection}>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { fontSize: getAdjustedFontSize(16) }]}
           placeholder="Сахар (ммоль/л)"
           keyboardType="numeric"
           value={sugar}
           onChangeText={setSugar}
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { fontSize: getAdjustedFontSize(16) }]}
           placeholder="Что ели/пили?"
           value={food}
           onChangeText={setFood}
         />
         <TouchableOpacity style={styles.addButton} onPress={handleAddLog}>
           <Plus color="white" size={24} />
-          <Text style={styles.addButtonText}>Записать</Text>
+          <Text style={[styles.addButtonText, { fontSize: getAdjustedFontSize(18) }]}>Записать</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.historyHeader}>
-        <Text style={styles.title}>История</Text>
+        <Text style={[styles.title, { fontSize: getAdjustedFontSize(22) }]}>История</Text>
         <TouchableOpacity onPress={handleShare}>
           <Share2 color="#00BFA5" size={24} />
         </TouchableOpacity>
@@ -166,7 +214,7 @@ export default function DiaryScreen() {
         renderItem={renderItem}
         keyExtractor={item => item.id.toString()}
         contentContainerStyle={styles.list}
-        ListEmptyComponent={<Text style={styles.emptyText}>Записей пока нет</Text>}
+        ListEmptyComponent={<Text style={[styles.emptyText, { fontSize: getAdjustedFontSize(16) }]}>Записей пока нет</Text>}
       />
     </View>
   );
@@ -271,5 +319,30 @@ const styles = StyleSheet.create({
     marginTop: 50,
     color: '#999',
     fontSize: 16,
-  }
+  },
+  warningBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFE5E5',
+    padding: 15,
+    marginHorizontal: 20,
+    marginTop: 15,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#FFB2B2',
+  },
+  warningIcon: {
+    marginRight: 12,
+  },
+  warningTextContainer: {
+    flex: 1,
+  },
+  warningTitle: {
+    color: '#D32F2F',
+    fontWeight: 'bold',
+    marginBottom: 2,
+  },
+  warningSubtitle: {
+    color: '#C62828',
+  },
 });
