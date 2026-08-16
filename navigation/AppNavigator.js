@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { View, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { Book, Bell, MessageSquare, Bot, Users, Settings as SettingsIcon } from 'lucide-react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
+import { Book, Bell, MessageSquare, Users, Settings as SettingsIcon } from 'lucide-react-native';
 import { supabase } from '../utils/supabase';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import DiaryScreen from '../screens/DiaryScreen';
 import SettingsScreen from '../screens/SettingsScreen';
@@ -15,42 +14,6 @@ import AuthScreen from '../screens/AuthScreen';
 import PatientListScreen from '../screens/PatientListScreen';
 
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
-
-function DiaryStack() {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: '#f8f9fa' },
-        headerTitleStyle: { fontWeight: '600' },
-        headerTintColor: '#333',
-      }}
-    >
-      <Stack.Screen 
-        name="DiaryHome" 
-        component={DiaryScreen} 
-        options={({ navigation }) => ({
-          title: 'Дневник',
-          headerRight: () => (
-            <TouchableOpacity 
-              onPress={() => navigation.navigate('Settings')} 
-              style={{ marginRight: 10, padding: 5 }}
-            >
-              <SettingsIcon size={24} color="#00BFA5" />
-            </TouchableOpacity>
-          ),
-        })}
-      />
-      <Stack.Screen 
-        name="Settings" 
-        component={SettingsScreen} 
-        options={{ 
-          title: 'Настройки',
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
 
 export default function AppNavigator() {
   const [session, setSession] = useState(null);
@@ -183,7 +146,7 @@ export default function AppNavigator() {
                 if (route.name === 'Diary') return <Book size={size} color={color} />;
                 if (route.name === 'Reminders') return <Bell size={size} color={color} />;
                 if (route.name === 'Chat') return <MessageSquare size={size} color={color} />;
-                if (route.name === 'Assistant') return <Bot size={size} color={color} />;
+                if (route.name === 'Settings') return <SettingsIcon size={size} color={color} />;
               },
               tabBarActiveTintColor: '#00BFA5',
               tabBarInactiveTintColor: 'gray',
@@ -191,17 +154,10 @@ export default function AppNavigator() {
               headerTitleStyle: { fontWeight: '600' },
             })}
           >
-            <Tab.Screen 
-              name="Diary" 
-              component={DiaryStack} 
-              options={{ 
-                title: 'Дневник',
-                headerShown: false
-              }} 
-            />
+            <Tab.Screen name="Diary" component={DiaryScreen} options={{ title: 'Дневник' }} />
             <Tab.Screen name="Reminders" component={RemindersScreen} options={{ title: 'Напоминания' }} />
             <Tab.Screen name="Chat" component={ChatScreen} options={{ title: 'Чат' }} />
-            <Tab.Screen name="Assistant" component={AIScreen} options={{ title: 'ИИ Ассистент' }} />
+            <Tab.Screen name="Settings" component={SettingsScreen} options={{ title: 'Настройки' }} />
           </Tab.Navigator>
         )
       ) : (

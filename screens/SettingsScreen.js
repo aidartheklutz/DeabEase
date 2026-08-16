@@ -42,7 +42,7 @@ export default function SettingsScreen({ navigation }) {
       await updateFontSize(fontSize);
       
       Alert.alert('Успех', 'Настройки сохранены', [
-        { text: 'OK', onPress: () => navigation.goBack() }
+        { text: 'OK', onPress: () => navigation.navigate('Diary') }
       ]);
     } catch (e) {
       Alert.alert('Ошибка', 'Не удалось сохранить настройки');
