@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Alert, ActivityIndicator, Linking } from 'react-native';
 import { Send, Phone, AlertTriangle, User } from 'lucide-react-native';
 import { supabase } from '../utils/supabase';
 import DoctorSelection from '../components/DoctorSelection';
-import * as Clipboard from 'expo-clipboard';
 import { useSettings } from '../context/SettingsContext';
 
 export default function ChatScreen({ route }) {
@@ -91,9 +90,12 @@ export default function ChatScreen({ route }) {
         `Номер: ${partnerProfile.phone_number}`,
         [
             { text: 'Отмена', style: 'cancel' },
-            { text: 'Копировать', onPress: () => {
-                Clipboard.setStringAsync(partnerProfile.phone_number);
-                Alert.alert('Скопировано', 'Номер телефона скопирован в буфер обмена');
+            { text: 'Набрать', onPress: async () => {
+                try {
+                    await Linking.openURL(`tel:${partnerProfile.phone_number}`);
+                } catch (err) {
+                    Alert.alert('Ошибка', 'Не удалось совершить звонок');
+                }
             }}
         ]
     );
